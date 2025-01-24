@@ -17,6 +17,9 @@ export default function Index() {
       <TouchableOpacity onPress={() => router.push("/videocamera")}>
         <Text>Open Video Cam</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push("/audio")}>
+        <Text>Open Mic</Text>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -51,6 +51,7 @@ const CameraScreen = () => {
     (async () => {
       let { status } = await Camera.getCameraPermissionsAsync();
     })();
+    handlePhotoUpload();
   }, []);
 
   const handlePhotoUpload = async () => {
@@ -98,15 +99,6 @@ const CameraScreen = () => {
 
   return (
     <View>
-      <TouchableOpacity
-        style={{ justifyContent: "center", alignItems: "center" }}
-        onPress={handlePhotoUpload}
-      >
-        <View>
-          <Text>Open Camera </Text>
-        </View>
-      </TouchableOpacity>
-
       {photo && (
         <View
           style={{
