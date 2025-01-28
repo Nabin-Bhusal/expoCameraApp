@@ -11,10 +11,10 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <TouchableOpacity onPress={() => router.push("/camera")}>
+      <TouchableOpacity onPress={() => router.push("/camera2")}>
         <Text>Open Camera</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push("/videocamera")}>
+      <TouchableOpacity onPress={() => router.push("/videocamera2")}>
         <Text>Open Video Cam</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => router.push("/audio")}>

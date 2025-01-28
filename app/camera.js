@@ -10,37 +10,7 @@ import {
 import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import { Camera, CameraView } from "expo-camera";
-
-const ApiRequestWithImage = async (route, data, imageData) => {
-  try {
-    const formData = new FormData();
-    for (const key in data) {
-      if (data.hasOwnProperty(key)) {
-        formData.append(key, data[key]);
-      }
-    }
-    for (const key in imageData) {
-      if (imageData.hasOwnProperty(key)) {
-        formData.append(key, {
-          uri: imageData[key],
-          type: "image/png",
-          name: "photo.png",
-        });
-      }
-    }
-    const response = await axios.post(route, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        key: "8623a0c8244bcdd6dd7ab48c8cef6c8546a38367839f0d00183c298bbfbc89d6",
-      },
-    });
-
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
+import Utils from "../utils/Utils";
 
 const CameraScreen = () => {
   const cameraRef = useRef(null);
@@ -72,7 +42,7 @@ const CameraScreen = () => {
 
   const sendPhoto = async () => {
     try {
-      let response = await ApiRequestWithImage(
+      let response = await Utils.ApiRequestWithImage(
         "https://fs.nicnepal.org/files/temp_fon/",
         { Remarks: "Test" },
         { files: photo?.uri }
