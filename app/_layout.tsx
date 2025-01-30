@@ -29,11 +29,11 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen
-        name="camera"
+        name="camera2"
         options={{ ...headerOptions, title: "Camera" }}
       />
       <Stack.Screen
-        name="videocamera"
+        name="videocamera2"
         options={{ ...headerOptions, title: "Video" }}
       />
       <Stack.Screen
