@@ -124,23 +124,25 @@ export default function AudioRecorderScreen() {
       const fileType = "audio/m4a";
 
       const formData = new FormData();
-      formData.append("file", {
+      formData.append("files", {
         uri: fileUri,
         name: fileName,
         type: fileType,
       });
 
-      const response = await fetch("https://fs.nicnepal.org/files/temp_fon/", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          key: "8623a0c8244bcdd6dd7ab48c8cef6c8546a38367839f0d00183c298bbfbc89d6",
-        },
-      });
-      if (response?.data) {
-        console.log(response.data?.uri[0]);
-      }
+      // return
+
+      const response = await axios.post(
+        "https://fs.nicnepal.org/files/temp_fon/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            key: "8623a0c8244bcdd6dd7ab48c8cef6c8546a38367839f0d00183c298bbfbc89d6",
+          },
+        }
+      );
+      Alert.alert("Response", response.data.url[0]);
     } catch (err) {
       console.error("Failed to upload audio:", err);
     }

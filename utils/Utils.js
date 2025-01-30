@@ -1,3 +1,5 @@
+import axios from "axios";
+import { Alert } from "react-native";
 export default Utils = {
   ApiRequestWithImage: async function (route, data, imageData) {
     try {

@@ -7,20 +7,22 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import { Camera } from "expo-camera";
-
+import { Camera, CameraView } from "expo-camera";
+import Ionicons from "@expo/vector-icons/Ionicons";
 const MyVideoCamera = ({ isRecordingEnabled, onRecord, onClose }) => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasAudioPermission, setHasAudioPermission] = useState(null);
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [video, setVideo] = useState(null);
   const cameraRef = useRef(null);
 
-  //   useEffect(() => {
-  //     if (isRecordingEnabled && !isCameraVisible) {
-  //       openCamera();
-  //     }
-  //   }, [isRecordingEnabled]);
+  useEffect(() => {
+    console.log("isRecordingEnabled:", isRecordingEnabled);
+    if (isRecordingEnabled && !isCameraVisible) {
+      openCamera();
+    }
+  }, [isRecordingEnabled]);
 
   const openCamera = async () => {
     const cameraStatus = await Camera.requestCameraPermissionsAsync();
@@ -43,7 +45,7 @@ const MyVideoCamera = ({ isRecordingEnabled, onRecord, onClose }) => {
   const closeCamera = () => {
     setIsCameraVisible(false);
     if (onClose && typeof onClose === "function") {
-      onClose();
+      onClose(video);
     }
   };
 
@@ -51,11 +53,16 @@ const MyVideoCamera = ({ isRecordingEnabled, onRecord, onClose }) => {
     if (cameraRef.current) {
       try {
         setIsRecording(true);
-        const video = await cameraRef.current.recordAsync();
+        const itsVideo = await cameraRef.current.recordAsync();
+        console.log("ts", itsVideo);
         setIsRecording(false);
         setIsCameraVisible(false);
+        if (itsVideo) {
+          onClose(itsVideo);
+        }
+
         if (onRecord && typeof onRecord === "function") {
-          onRecord(video);
+          onRecord(itsVideo);
         }
       } catch (error) {
         console.error("Error recording video:", error);
@@ -69,6 +76,8 @@ const MyVideoCamera = ({ isRecordingEnabled, onRecord, onClose }) => {
     if (cameraRef.current && isRecording) {
       cameraRef.current.stopRecording();
     }
+    console.log("VID", video);
+    onClose(video);
   };
 
   if (hasCameraPermission === false || hasAudioPermission === false) {
@@ -102,7 +111,7 @@ const MyVideoCamera = ({ isRecordingEnabled, onRecord, onClose }) => {
                 style={styles.closeButton}
                 onPress={closeCamera}
               >
-                <Text>Close</Text>
+                <Ionicons name="arrow-back-outline" size={18} color="blue" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.recordButton}
@@ -144,6 +153,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     padding: 10,
     borderRadius: 5,
+    alignSelf: "flex-start",
+    borderRadius: 50,
   },
   recordButton: {
     height: 80,

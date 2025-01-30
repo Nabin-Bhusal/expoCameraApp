@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { Camera, CameraView } from "expo-camera";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const MyCamera = ({ isCaptureEnabled, onCapture, onClose }) => {
   const cameraRef = useRef(null);
@@ -61,7 +62,7 @@ const MyCamera = ({ isCaptureEnabled, onCapture, onClose }) => {
                 style={styles.closeButton}
                 onPress={closeCamera}
               >
-                <Text>Close</Text>
+                <Ionicons name="arrow-back-outline" size={18} color="blue" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.captureButton}
@@ -98,6 +99,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     padding: 10,
     borderRadius: 5,
+    alignSelf: "flex-start",
+    borderRadius: 50,
   },
   captureButton: {
     height: 80,
