@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { Audio } from "expo-av";
 import axios from "axios";
+import { useLocalSearchParams } from "expo-router";
 
 const ApiRequestWithImage = async (route, data, imageData) => {
   try {
@@ -35,6 +36,8 @@ const ApiRequestWithImage = async (route, data, imageData) => {
 };
 
 export default function AudioRecorderScreen() {
+  const searchParams = useLocalSearchParams();
+  console.log(searchParams);
   const [recording, setRecording] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);

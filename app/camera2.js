@@ -12,8 +12,10 @@ import MyCamera from "../components/MyCamera";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Utils from "../utils/Utils";
 import AppStyles from "../styles/AppStyles";
+import { useRouter } from "expo-router";
 
 const ParentComponent = () => {
+  const router = useRouter();
   const [isCaptureEnabled, setIsCaptureEnabled] = useState(true);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
 
@@ -29,7 +31,10 @@ const ParentComponent = () => {
         { Remarks: "Test" },
         { files: capturedPhoto?.uri }
       );
-      Alert.alert("Response", response.data.url[0]);
+      let imageUrl = response?.data?.url[0];
+      router.push({ pathname: "./audio", params: { imageUrl: imageUrl } });
+
+      // Alert.alert("Response", response.data.url[0]);
     } catch (error) {
       console.error("Upload error:", error);
 
