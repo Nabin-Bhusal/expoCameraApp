@@ -3,6 +3,9 @@ import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { Audio } from "expo-av";
 import axios from "axios";
 import { useLocalSearchParams } from "expo-router";
+import Api from "../constants/Api";
+import qs from "qs";
+import request from "../config/RequestManager";
 
 const ApiRequestWithImage = async (route, data, imageData) => {
   try {
@@ -145,7 +148,31 @@ export default function AudioRecorderScreen() {
           },
         }
       );
-      Alert.alert("Response", response.data.url[0]);
+      if (response?.data?.url[0]) {
+        let data = qs.stringify({
+          image_video: searchParams.imageUrl,
+          gps_location: "string",
+          any_user: "string",
+          voice: response?.data?.url[0],
+          incident_type: "animal",
+          location: "Achham",
+          is_acknowledged: true,
+        });
+        var finalResponse = await (await request())
+          .post(Api.SendReport, data)
+          .catch(function (error) {
+            Alert.alert("Error Ocurred Contact Support");
+          });
+        console.log(finalResponse);
+        if (finalResponse.data?.Code == 200) {
+          console.log(finalResponse?.data);
+          Alert.alert(finalResponse?.data?.Message);
+        } else {
+          Alert.alert(finalResponse.data?.Message);
+        }
+      } else {
+        Alert.alert("Error Ocurred Contact Support");
+      }
     } catch (err) {
       console.error("Failed to upload audio:", err);
     }
