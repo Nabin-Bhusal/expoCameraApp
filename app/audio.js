@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { Audio } from "expo-av";
 import axios from "axios";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Api from "../constants/Api";
 import qs from "qs";
 import request from "../config/RequestManager";
@@ -40,7 +40,7 @@ const ApiRequestWithImage = async (route, data, imageData) => {
 
 export default function AudioRecorderScreen() {
   const searchParams = useLocalSearchParams();
-  console.log(searchParams);
+  const router = useRouter();
   const [recording, setRecording] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -136,8 +136,6 @@ export default function AudioRecorderScreen() {
         type: fileType,
       });
 
-      // return
-
       const response = await axios.post(
         "https://fs.nicnepal.org/files/temp_fon/",
         formData,
@@ -148,33 +146,35 @@ export default function AudioRecorderScreen() {
           },
         }
       );
-      if (response?.data?.url[0]) {
-        let data = qs.stringify({
+      let url = response?.data?.url[0];
+      if (url) {
+        const data = qs.stringify({
           image_video: searchParams.imageUrl,
-          gps_location: "string",
+          gps_location: "27.7172, 85.3240",
           any_user: "string",
-          voice: response?.data?.url[0],
+          voice: url,
           incident_type: "animal",
           location: "Achham",
-          is_acknowledged: true,
+          is_acknowledged: false,
         });
         var finalResponse = await (await request())
           .post(Api.SendReport, data)
           .catch(function (error) {
-            Alert.alert("Error Ocurred Contact Support");
+            Alert.alert("Error Ocurred Contact Support !");
+            console.log(JSON.stringify(error));
           });
-        console.log(finalResponse);
+        // console.log(finalResponse);
         if (finalResponse.data?.Code == 200) {
-          console.log(finalResponse?.data);
-          Alert.alert(finalResponse?.data?.Message);
+          Alert.alert("image and voice successfully sent");
         } else {
-          Alert.alert(finalResponse.data?.Message);
+          Alert.alert("image and voice successfully sent");
+          router.push("/");
         }
       } else {
         Alert.alert("Error Ocurred Contact Support");
       }
     } catch (err) {
-      console.error("Failed to upload audio:", err);
+      console.error("Failed to upload audio:", JSON.stringify(err));
     }
   };
 

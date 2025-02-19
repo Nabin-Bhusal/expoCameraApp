@@ -11,8 +11,12 @@ import { Video, ResizeMode } from "expo-av";
 import MyVideoCamera from "../components/MyVideoCamera";
 import AppStyles from "../styles/AppStyles";
 import axios from "axios";
+import qs from "qs";
+import request from "../config/RequestManager";
+import { useRouter } from "expo-router";
 
 const ParentComponent = () => {
+  const router = useRouter();
   const [isRecordingEnabled, setIsRecordingEnabled] = useState(true);
   const [recordedVideo, setRecordedVideo] = useState(null);
   const videoRef = useRef(null);
@@ -55,7 +59,32 @@ const ParentComponent = () => {
           },
         }
       );
-      Alert.alert("Response", response.data.url[0]);
+      let url = response?.data?.url[0];
+      if (url) {
+        const data = qs.stringify({
+          image_video: url,
+          gps_location: "27.7172, 85.3240",
+          any_user: "string",
+          incident_type: "animal",
+          location: "Achham",
+          is_acknowledged: false,
+        });
+        var finalResponse = await (await request())
+          .post(Api.SendReport, data)
+          .catch(function (error) {
+            Alert.alert("Error Ocurred Contact Support !");
+            console.log(JSON.stringify(error));
+          });
+        // console.log(finalResponse);
+        if (finalResponse.data?.Code == 200) {
+          Alert.alert("video successfully sent");
+        } else {
+          Alert.alert("video successfully sent");
+          router.push("/");
+        }
+      } else {
+        Alert.alert("Error Ocurred Contact Support");
+      }
     } catch (error) {
       console.error("Upload error:", error);
 

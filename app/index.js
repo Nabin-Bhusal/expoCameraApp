@@ -26,9 +26,9 @@ export default function Index() {
       </Text>
 
       {[
-        { label: "Open Camera", route: "/camera2" },
-        { label: "Open Video Cam", route: "/videocamera2" },
-        { label: "Open Mic", route: "/audio" },
+        { label: "Photo and audio", route: "/camera2" },
+        { label: "Video", route: "/videocamera2" },
+        // { label: "Open Mic", route: "/audio" },
       ].map(({ label, route }, index) => (
         <TouchableOpacity
           key={index}

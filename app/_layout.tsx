@@ -40,6 +40,7 @@ export default function RootLayout() {
         name="audio"
         options={{ ...headerOptions, title: "Audio" }}
       />
+      <Stack.Screen name="index" options={{ ...headerOptions }} />
     </Stack>
   );
 }
