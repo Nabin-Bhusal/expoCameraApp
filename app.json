@@ -41,6 +41,19 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": {
+            "ios": {
+              "reason": "Allow $(PRODUCT_NAME) to access your location even when the app is closed or not in use."
+            },
+            "android": {
+              "reason": "Allow $(PRODUCT_NAME) to access your location even when the app is closed or not in use."
+            }
+          }
+        }
       ]
     ],
     "experiments": {

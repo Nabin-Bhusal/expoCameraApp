@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Alert } from "react-native";
+import * as Location from "expo-location";
 export default Utils = {
   ApiRequestWithImage: async function (route, data, imageData) {
     try {
@@ -29,6 +30,23 @@ export default Utils = {
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  },
+  GetLocation: async function GetLocation() {
+    try {
+      const startTime = Date.now();
+      let location = await Location.getCurrentPositionAsync();
+      const elapsedTime = Date.now() - startTime;
+      console.log("Time taken to fetch location:", elapsedTime, "ms");
+      if (location != null) {
+        return {
+          lat: location.coords.latitude,
+          lng: location.coords.longitude,
+        };
+      }
+    } catch (error) {
+      return { errorMessage: "Unable to give location " + error };
+      // ToastMessage.Long("Unable to give location " + error);
     }
   },
 };

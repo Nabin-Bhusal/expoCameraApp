@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Button,
@@ -14,6 +14,7 @@ import axios from "axios";
 import qs from "qs";
 import request from "../config/RequestManager";
 import { useRouter } from "expo-router";
+import Utils from "../utils/Utils";
 
 const ParentComponent = () => {
   const router = useRouter();
@@ -21,6 +22,24 @@ const ParentComponent = () => {
   const [recordedVideo, setRecordedVideo] = useState(null);
   const videoRef = useRef(null);
   const [status, setStatus] = useState({});
+  const [location, setLocation] = useState();
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  const getLocation = async () => {
+    let { status } = await Location.getForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Location permission not granted");
+      // props.navigation.navigate("PermissionScreen", { type: "location" });
+      return;
+    }
+
+    let location = await Utils.GetLocation();
+    console.log(location?.lat, location?.lng);
+    setLocation(location);
+  };
 
   const handleCapture = (video) => {
     // console.log(video);
@@ -63,7 +82,7 @@ const ParentComponent = () => {
       if (url) {
         const data = qs.stringify({
           image_video: url,
-          gps_location: "27.7172, 85.3240",
+          gps_location: location ? location?.lat + "," + location?.lng : "0, 0",
           any_user: "string",
           incident_type: "animal",
           location: "Achham",

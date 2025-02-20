@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { Audio } from "expo-av";
 import axios from "axios";
@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Api from "../constants/Api";
 import qs from "qs";
 import request from "../config/RequestManager";
+import Utils from "../utils/Utils";
 
 const ApiRequestWithImage = async (route, data, imageData) => {
   try {
@@ -45,6 +46,11 @@ export default function AudioRecorderScreen() {
   const [audioUri, setAudioUri] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState(null);
+  const [location, setLocation] = useState();
+
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   const startRecording = async () => {
     try {
@@ -150,7 +156,7 @@ export default function AudioRecorderScreen() {
       if (url) {
         const data = qs.stringify({
           image_video: searchParams.imageUrl,
-          gps_location: "27.7172, 85.3240",
+          gps_location: location ? location?.lat + "," + location?.lng : "0, 0",
           any_user: "string",
           voice: url,
           incident_type: "animal",
@@ -176,6 +182,19 @@ export default function AudioRecorderScreen() {
     } catch (err) {
       console.error("Failed to upload audio:", JSON.stringify(err));
     }
+  };
+
+  const getLocation = async () => {
+    let { status } = await Location.getForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Location permission not granted");
+      // props.navigation.navigate("PermissionScreen", { type: "location" });
+      return;
+    }
+
+    let location = await Utils.GetLocation();
+    console.log(location?.lat, location?.lng);
+    setLocation(location);
   };
 
   return (
