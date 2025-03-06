@@ -7,6 +7,8 @@ import Api from "../constants/Api";
 import qs from "qs";
 import request from "../config/RequestManager";
 import Utils from "../utils/Utils";
+import StoreHelper from "../redux/StoreHelper";
+import * as Location from "expo-location";
 
 const ApiRequestWithImage = async (route, data, imageData) => {
   try {
@@ -148,32 +150,25 @@ export default function AudioRecorderScreen() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            key: "8623a0c8244bcdd6dd7ab48c8cef6c8546a38367839f0d00183c298bbfbc89d6",
+            key: StoreHelper.get("apiKey"),
           },
         }
       );
       let url = response?.data?.url[0];
+      console.log("url", url);
       if (url) {
-        const data = qs.stringify({
+        const data = {
           image_video: searchParams.imageUrl,
           gps_location: location ? location?.lat + "," + location?.lng : "0, 0",
           any_user: "string",
           voice: url,
-          incident_type: "animal",
+          incident_type: "trade",
           location: "Achham",
           is_acknowledged: false,
-        });
-        var finalResponse = await (await request())
-          .post(Api.SendReport, data)
-          .catch(function (error) {
-            Alert.alert("Error Ocurred Contact Support !");
-            console.log(JSON.stringify(error));
-          });
-        // console.log(finalResponse);
-        if (finalResponse.data?.Code == 200) {
-          Alert.alert("image and voice successfully sent");
-        } else {
-          Alert.alert("image and voice successfully sent");
+        };
+        var finalResponse = await Utils.ApiRequestPost(Api.SendReport, data);
+        if (finalResponse?.data) {
+          Alert.alert("success", "successfully uploaded");
           router.push("/");
         }
       } else {
@@ -185,6 +180,7 @@ export default function AudioRecorderScreen() {
   };
 
   const getLocation = async () => {
+    let locationResponse = await Location.requestForegroundPermissionsAsync();
     let { status } = await Location.getForegroundPermissionsAsync();
     if (status !== "granted") {
       console.log("Location permission not granted");

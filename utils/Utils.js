@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Alert } from "react-native";
 import * as Location from "expo-location";
+import StoreHelper from "../redux/StoreHelper";
 export default Utils = {
   ApiRequestWithImage: async function (route, data, imageData) {
     try {
@@ -35,7 +36,7 @@ export default Utils = {
   GetLocation: async function GetLocation() {
     try {
       const startTime = Date.now();
-      let location = await Location.getCurrentPositionAsync();
+      let location = await Location.getLastKnownPositionAsync();
       const elapsedTime = Date.now() - startTime;
       console.log("Time taken to fetch location:", elapsedTime, "ms");
       if (location != null) {
@@ -46,7 +47,25 @@ export default Utils = {
       }
     } catch (error) {
       return { errorMessage: "Unable to give location " + error };
-      // ToastMessage.Long("Unable to give location " + error);
+    }
+  },
+  ApiRequestPost: async function (route, data) {
+    try {
+      const response = await axios.post(route, data, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFTOKEN": StoreHelper.get("token"),
+        },
+      });
+
+      console.log("Response:", response.data);
+      return response;
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
     }
   },
 };

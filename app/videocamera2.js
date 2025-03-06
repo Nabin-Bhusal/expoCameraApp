@@ -15,6 +15,8 @@ import qs from "qs";
 import request from "../config/RequestManager";
 import { useRouter } from "expo-router";
 import Utils from "../utils/Utils";
+import Api from "../constants/Api";
+import * as Location from "expo-location";
 
 const ParentComponent = () => {
   const router = useRouter();
@@ -29,10 +31,11 @@ const ParentComponent = () => {
   }, []);
 
   const getLocation = async () => {
+    let locationResponse = await Location.requestForegroundPermissionsAsync();
     let { status } = await Location.getForegroundPermissionsAsync();
+
     if (status !== "granted") {
       console.log("Location permission not granted");
-      // props.navigation.navigate("PermissionScreen", { type: "location" });
       return;
     }
 
@@ -79,31 +82,47 @@ const ParentComponent = () => {
         }
       );
       let url = response?.data?.url[0];
-      if (url) {
-        const data = qs.stringify({
-          image_video: url,
-          gps_location: location ? location?.lat + "," + location?.lng : "0, 0",
-          any_user: "string",
-          incident_type: "animal",
-          location: "Achham",
-          is_acknowledged: false,
-        });
-        var finalResponse = await (await request())
-          .post(Api.SendReport, data)
-          .catch(function (error) {
-            Alert.alert("Error Ocurred Contact Support !");
-            console.log(JSON.stringify(error));
-          });
-        // console.log(finalResponse);
-        if (finalResponse.data?.Code == 200) {
-          Alert.alert("video successfully sent");
-        } else {
-          Alert.alert("video successfully sent");
-          router.push("/");
-        }
-      } else {
-        Alert.alert("Error Ocurred Contact Support");
+      const data = {
+        image_video: url,
+        gps_location: location ? location?.lat + "," + location?.lng : "0, 0",
+        any_user: "string",
+        incident_type: "trade",
+        location: "Achham",
+        is_acknowledged: false,
+      };
+      let finalResponse = await Utils.ApiRequestPost(Api.SendReport, data);
+      if (finalResponse?.data) {
+        Alert.alert("success", "successfully uploaded");
+        router.push("/");
       }
+      // console.log("url: ", url);
+      // console.log("Location ", location);
+      // if (url) {
+      //   const data = {
+      //     image_video: url,
+      //     gps_location: location ? location?.lat + "," + location?.lng : "0, 0",
+      //     any_user: "string",
+      //     incident_type: "animal",
+      //     location: "Achham",
+      //     is_acknowledged: false,
+      //   };
+      //   console.log(Api.SendReport);
+      //   var finalResponse = await (await request())
+      //     .post(Api.SendReport, data)
+      //     .catch(function (error) {
+      //       Alert.alert("Error Ocurred Contact Support !");
+      //       console.log(JSON.stringify(error));
+      //     });
+      //   // console.log(finalResponse);
+      //   if (finalResponse.data?.Code == 200) {
+      //     Alert.alert("video successfully sent");
+      //   } else {
+      //     Alert.alert("video successfully sent");
+      //     router.push("/");
+      //   }
+      // } else {
+      //   Alert.alert("Error Ocurred Contact Support");
+      // }
     } catch (error) {
       console.error("Upload error:", error);
 
